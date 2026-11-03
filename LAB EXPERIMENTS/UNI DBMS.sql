@@ -1,0 +1,29 @@
+CREATE DATABASE UNIDBMS;
+USE UNIDBMS;
+CREATE TABLE STUDENTS ( 
+    StudentID INT PRIMARY KEY, 
+    StudentName VARCHAR(50), 
+    Age INT, 
+    Department VARCHAR(30), 
+    Marks INT );
+
+INSERT INTO STUDENTS VALUES 
+(101, 'Arun', 20, 'CSE', 85), 
+(102, 'Bala', 21, 'IT', 90), 
+(103, 'Charan', 19, 'ECE', 78);
+DESC Students;
+ALTER TABLE STUDENTS ADD Email VARCHAR(100);
+ALTER TABLE STUDENTS MODIFY StudentName VARCHAR(100);
+ALTER TABLE STUDENTS RENAME COLUMN Marks TO TotalMarks;
+ALTER TABLE STUDENTS ADD CONSTRAINT chk_age CHECK (Age >= 17);
+RENAME TABLE STUDENTS TO StudentDetails;
+CREATE INDEX idx_department ON StudentDetails(Department);
+DROP INDEX idx_department ON Students;
+CREATE VIEW CSEStudents AS 
+SELECT StudentID, StudentName, Age 
+FROM StudentDetails 
+WHERE Department = 'CSE';
+DROP VIEW CSEStudents;
+DROP TABLE StudentDetails;
+
+DROP DATABASE UNIDBMS;
