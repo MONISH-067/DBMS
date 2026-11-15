@@ -368,7 +368,7 @@ function distinctGraphic(rows,id) {
       const score=Math.max(0,Math.min(5,Number(row.avg_review_score)||0));
       const stars=Array.from({length:5},(_,star)=>{
         const fill=Math.max(0,Math.min(1,score-star))*100, gradient='review-star-'+i+'-'+star;
-        return '<svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="'+gradient+'"><stop offset="'+fill+'%" stop-color="var(--star-fill)"/><stop offset="'+fill+'%" stop-color="var(--star-empty)"/></linearGradient></defs><path d="M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26Z" fill="url(#'+gradient+')" stroke="var(--star-outline)" stroke-width=".7"/></svg>';
+        return '<span class="rating-star" aria-hidden="true" style="font-size:34px;line-height:1;background:linear-gradient(90deg,var(--star-fill) '+fill+'%,var(--star-empty) '+fill+'%);-webkit-background-clip:text;background-clip:text;color:transparent">★</span>';
       }).join('');
       return '<button type="button" class="chart-choice star-rating-row" data-row-index="'+i+'"><span class="rating-outcome">'+escape(label(row.delivery_outcome))+'</span><span class="rating-stars" aria-hidden="true">'+stars+'</span><strong>'+escape(new Intl.NumberFormat("en",{maximumFractionDigits:20}).format(score))+' / 5</strong><small>'+escape(format(row.review_count))+' reviews</small></button>';
     }).join('')+'</div>';
