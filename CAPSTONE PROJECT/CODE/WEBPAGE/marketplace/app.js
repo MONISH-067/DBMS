@@ -364,11 +364,12 @@ function distinctGraphic(rows,id) {
     return '<p class="chart-unit">Area represents revenue within the top categories. Numbers match the legend.</p><svg class="treemap-chart" viewBox="0 0 800 400" role="group" aria-label="Category revenue treemap">'+boxes.map((b,i)=>'<g class="chart-choice" data-row-index="'+i+'"><title>'+escape(label(rows[i].category_name_en)+': '+format(rows[i].total_revenue,money))+'</title><rect x="'+b.x+'" y="'+b.y+'" width="'+b.w+'" height="'+b.h+'" fill="'+reportColors[i%8]+'" stroke="var(--card)" stroke-width="3"/><text x="'+(b.x+b.w/2)+'" y="'+(b.y+b.h/2)+'" text-anchor="middle" fill="#111" font-size="22">'+(i+1)+'</text></g>').join('')+'</svg>'+legend('category_name_en','total_revenue');
   }
     if(id==='R10') {
-    return '<p class="chart-unit">Average customer rating out of five stars. Partial stars represent the average score.</p><div class="star-rating-chart">'+rows.map((row,i)=>{
+    return '<p class="chart-unit">Average customer rating out of five stars. Partial stars represent the exact average.</p><div class="star-rating-chart">'+rows.map((row,i)=>{
       const score=Math.max(0,Math.min(5,Number(row.avg_review_score)||0));
       const stars=Array.from({length:5},(_,star)=>{
-        const fill=Math.max(0,Math.min(1,score-star))*100, gradient='review-star-'+i+'-'+star;
-        return '<span class="rating-star" aria-hidden="true" style="font-size:34px;line-height:1;background:linear-gradient(90deg,var(--star-fill) '+fill+'%,var(--star-empty) '+fill+'%);-webkit-background-clip:text;background-clip:text;color:transparent">★</span>';
+        const fill=Math.max(0,Math.min(1,score-star))*100;
+        const shape='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2 15.1 8.3 22 9.3 17 14.2 18.2 21 12 17.8 5.8 21 7 14.2 2 9.3 8.9 8.3Z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+        return '<span class="rating-star" style="--star-delay:'+(i*120+star*110)+'ms;--star-percent:'+fill+'%" aria-hidden="true">'+shape+'<span class="rating-star-fill">'+shape+'</span></span>';
       }).join('');
       return '<button type="button" class="chart-choice star-rating-row" data-row-index="'+i+'"><span class="rating-outcome">'+escape(label(row.delivery_outcome))+'</span><span class="rating-stars" aria-hidden="true">'+stars+'</span><strong>'+escape(new Intl.NumberFormat("en",{maximumFractionDigits:20}).format(score))+' / 5</strong><small>'+escape(format(row.review_count))+' reviews</small></button>';
     }).join('')+'</div>';
@@ -787,4 +788,5 @@ byId("message").textContent = "Loading marketplace data…";
   .then(() => { byId("message").textContent = ""; })
 
   .catch(error => { byId("message").textContent = error.message || "Unable to load marketplace data."; });
+
 
