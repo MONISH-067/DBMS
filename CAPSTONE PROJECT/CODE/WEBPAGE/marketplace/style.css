@@ -259,7 +259,8 @@ main>header{padding-right:110px}
 
 .waffle-chart{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;max-width:420px;margin:24px auto}.waffle-chart>span{aspect-ratio:1;border-radius:3px}
 .chart-legend{display:grid;gap:8px;margin-top:20px}.chart-legend .chart-choice{justify-content:flex-start;gap:12px;text-align:left;flex-wrap:wrap}.chart-legend strong{margin-left:auto}
-.treemap-chart{width:100%;display:block;max-height:440px}.chart-choice{cursor:pointer}.chart-choice[aria-pressed="true"]{outline:2px solid var(--ink);outline-offset:2px}.chart-choice:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.treemap-chart{width:100%;display:block;max-height:440px}
+.chart-choice{cursor:pointer}.chart-choice[aria-pressed="true"]{outline:2px solid var(--ink);outline-offset:2px}.chart-choice:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 .plot-row{display:grid;width:100%;grid-template-columns:minmax(120px,1fr) minmax(90px,3fr) minmax(70px,1fr);gap:22px;text-align:left;margin:10px 0;padding:14px}.plot-row strong{text-align:right}.plot-track{position:relative;height:2px;background:var(--line);display:block}.plot-stem{position:absolute;inset:0 auto 0 0;width:var(--point);background:var(--plot-color);height:3px}.plot-dot{position:absolute;left:var(--point);top:50%;width:14px;height:14px;border-radius:50%;background:var(--plot-color);transform:translate(-50%,-50%)}.dot-chart .plot-track{background:repeating-linear-gradient(to right,var(--line) 0 2px,transparent 2px 20%);height:20px;border-bottom:1px solid var(--line)}.plot-axis{display:flex;justify-content:space-between;margin:12px 20% 0;color:var(--muted);font-size:.8rem}
 @media(max-width:600px){.plot-row{grid-template-columns:1fr auto;gap:18px}.plot-row .plot-track{grid-column:1/-1;grid-row:2;margin:0 8px}.plot-axis{margin:12px 22px}.chart-legend strong{margin-left:0}.waffle-chart{gap:3px}}
 

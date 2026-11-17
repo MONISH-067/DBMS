@@ -375,9 +375,9 @@ function distinctGraphic(rows,id) {
     }).join('')+'</div>';
   }
   if(id==='R08'){
-    const review=id==='R10',key=review?'avg_review_score':'avg_freight';
-    const max=review?5:Math.max(1,...rows.map(row=>Number(row[key])||0));
-    return '<p class="chart-unit">'+(review?'Review scores on a fixed scale from 0 to 5':'Average freight in BRL; stems start at zero')+'</p><div class="'+(review?'dot-chart':'lollipop-chart')+'">'+rows.map((row,i)=>'<button class="chart-choice plot-row" data-row-index="'+i+'"><span>'+escape(review?label(row.delivery_outcome):stateLabel(row.state))+'</span><span class="plot-track" style="--point:'+Math.max(0,Number(row[key])||0)/max*100+'%;--plot-color:'+reportColors[i%8]+'">'+(review?'':'<span class="plot-stem"></span>')+'<span class="plot-dot"></span></span><strong>'+escape(format(row[key],review?number:money))+(review?' / 5':'')+'</strong></button>').join('')+'<div class="plot-axis"><span>0</span><span>'+escape(format(max,review?number:money))+'</span></div></div>';
+    const key='avg_freight';
+    const max=Math.max(1,...rows.map(row=>Number(row[key])||0));
+    return '<p class="chart-unit">Average freight in BRL; stems start at zero</p><div class="lollipop-chart">'+rows.map((row,i)=>'<button class="chart-choice plot-row" data-row-index="'+i+'"><span>'+escape(stateLabel(row.state))+'</span><span class="plot-track" style="--point:'+Math.max(0,Number(row[key])||0)/max*100+'%;--plot-color:'+reportColors[i%8]+'"><span class="plot-stem"></span><span class="plot-dot"></span></span><strong>'+escape(format(row[key],money))+'</strong></button>').join('')+'<div class="plot-axis"><span>0</span><span>'+escape(format(max,money))+'</span></div></div>';
   }
   return null;
 }
