@@ -120,6 +120,9 @@ def get_db_connection(config: dict, for_reset: bool = False):
             database=None if for_reset else config["database"],
             autocommit=False,
             use_pure=True,
+            ssl_ca=os.getenv("MYSQL_SSL_CA") or None,
+            ssl_verify_cert=True,
+            ssl_verify_identity=True,
         )
         return conn
     except mysql.connector.Error as err:
@@ -177,6 +180,9 @@ def batch_insert(
 
     start_time = time.time()
 
+    # CSV parsing can leave the remote TiDB connection idle long enough to be closed.
+    conn.ping(reconnect=True, attempts=3, delay=2)
+    cursor = conn.cursor()
     cursor.execute(f"SELECT COUNT(*) FROM `{table_name}`")
     count_before = cursor.fetchone()[0]
 
@@ -185,6 +191,13 @@ def batch_insert(
         try:
             cursor.executemany(insert_sql, batch)
         except mysql.connector.Error as err:
+            if err.errno in {2006, 2013, 2055}:
+                logger.warning("[%s] Connection lost on rows %d-%d; reconnecting and retrying batch.",
+                               table_name, i + 1, min(i + batch_size, total_records))
+                conn.reconnect(attempts=3, delay=2)
+                cursor = conn.cursor()
+                cursor.executemany(insert_sql, batch)
+                continue
             logger.warning(
                 "[%s] Batch insert failed for rows %d-%d: %s. Falling back to row-by-row insert.",
                 table_name,

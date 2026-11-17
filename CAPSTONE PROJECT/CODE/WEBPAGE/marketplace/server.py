@@ -198,6 +198,35 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json({"error": "Could not load the data. Check the local MySQL connection and try again."}, 500)
 
 
+def handle_vercel_request(request):
+    """Adapt the existing GET handler to Vercel's Python request/response interface."""
+    from io import BytesIO
+    from urllib.parse import urlsplit
+
+    parsed = urlsplit(request.path)
+
+    class ResponseHandler(Handler):
+        def __init__(self, request):
+            self.path = parsed.path + ("?" + parsed.query if parsed.query else "")
+            self.headers = request.headers
+            self.wfile = BytesIO()
+            self.status = 200
+            self.response_headers = {}
+
+        def send_response(self, status, message=None):
+            self.status = status
+
+        def send_header(self, key, value):
+            self.response_headers[key] = value
+
+        def end_headers(self):
+            pass
+
+    handler = ResponseHandler(request)
+    handler.do_GET()
+    return handler.status, handler.response_headers, handler.wfile.getvalue()
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--port", type=int, default=8502)

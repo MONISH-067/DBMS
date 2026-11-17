@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en" data-type="software">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Explore historical Brazilian marketplace orders, delivery performance, and the MySQL data behind them.">
+<meta name="page-type" content="software">
+<meta name="site-kind" content="software">
+<meta name="theme-color" content="#eeefe9">
+<title>Marketplace Operations · Olist</title>
+<script src="/theme.js"></script>
+<link rel="stylesheet" href="/style.css">
+<script src="/app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<aside>
+  <a class="brand" href="?view=overview"><span aria-hidden="true">◒</span> Marketplace<br>Operations</a>
+  <nav aria-label="Workspace">
+    <a href="?view=overview" data-view="overview">Overview</a>
+    <a href="?view=orders" data-view="orders">Orders</a>
+    <a href="?view=reports" data-view="reports">Reports</a>
+    <a href="?view=database" data-view="database">Database</a>
+  </nav>
+
+  <p class="source">Olist public dataset<br>Brazilian marketplace</p>
+</aside>
+<main id="main" tabindex="-1">
+  <button id="theme-toggle" class="theme-toggle" type="button" role="switch" aria-checked="false" aria-label="Dark mode"><span class="theme-knob" aria-hidden="true">☀</span><span class="theme-label">LIGHT</span></button>
+  <header data-enter><p id="context">MARKETPLACE INTELLIGENCE</p><h1 id="heading">Overview</h1><p id="intro"></p></header>
+  <form id="filters" autocomplete="off" hidden>
+    <label>From<input type="date" name="start_date"></label>
+    <label>Through<input type="date" name="end_date"></label>
+    <label>State<select name="state" id="state"><option value="">All states</option></select></label>
+    <label id="search" hidden>Order ID<input name="q" maxlength="32" pattern="[a-fA-F0-9]{1,32}" placeholder="e.g. 00a1…" spellcheck="false"></label>
+    <label id="outcome" hidden>Delivery<select name="outcome"><option value="">All outcomes</option><option value="late">Late</option><option value="on_time">On time</option><option value="not_delivered">Not delivered</option></select></label>
+    <label id="status-filter" hidden>Order status<select name="status"><option value="">All statuses</option><option>delivered</option><option>shipped</option><option>canceled</option><option>approved</option><option>processing</option><option>invoiced</option><option>unavailable</option><option>created</option></select></label>
+    <label id="category-filter" hidden>Category<input name="category" maxlength="100" placeholder="e.g. bed_bath_table…" spellcheck="false"></label>
+    <button>Apply filters</button><a id="reset">Clear filters</a>
+  </form>
+  <p id="message" role="status"></p>
+  <div id="content"></div>
+  <footer>Olist · Brazilian E-Commerce Public Dataset</footer>
+</main>
+</body></html>

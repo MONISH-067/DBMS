@@ -18,7 +18,7 @@ vm.runInContext(helpers + states + charts, context);
     context.rows = rows;
     context.id = id;
     const html = vm.runInContext('reportGraphic(rows, id)', context);
-    const types = {R01:'report-line',R02:'share-chart',R03:'report-bars',R04:'waffle-chart',R05:'area-chart',R06:'delivery-groups',R07:'treemap-chart',R08:'lollipop-chart',R09:'histogram',R10:'dot-chart'};
+    const types = {R01:'report-line',R02:'share-chart',R03:'report-bars',R04:'waffle-chart',R05:'area-chart',R06:'delivery-groups',R07:'treemap-chart',R08:'lollipop-chart',R09:'histogram',R10:'star-rating-chart'};
     assert.ok(html.includes(types[id]), id + ' expected ' + types[id]);
     if (id === 'R01') assert.ok(!html.includes('<polygon'));
     if (id === 'R05') assert.ok(html.includes('<polygon'));
@@ -29,7 +29,13 @@ vm.runInContext(helpers + states + charts, context);
       assert.ok(rows.length > 1);
       assert.ok(rows.every(row => /^\d{4}-\d{2}$/.test(row.order_month)));
     }
-    if (id === 'R10') assert.match(html, /fixed scale from 0 to 5/);
+    if (id === 'R10') {
+      assert.equal((html.match(/<linearGradient /g)||[]).length, rows.length * 5);
+      context.rows = [{delivery_outcome:'on_time',avg_review_score:4.25,review_count:10}];
+      const partial = vm.runInContext('reportGraphic(rows, "R10")', context);
+      assert.match(partial, /offset="25%"/);
+      assert.ok(partial.includes('4.25 / 5'));
+    }
     context.rows = [];
     assert.match(vm.runInContext('reportGraphic(rows, id)', context), /No data matches/);
     console.log(id + ': chart rendered from live data; empty state passed');

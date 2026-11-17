@@ -5,6 +5,7 @@ Authors: Monish L (1972260035), Prasannakumar S (1924260253),
 """
 
 import os
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
 import mysql.connector
@@ -42,7 +43,7 @@ def _get_connection_params(role: str = "ro") -> dict:
         user = os.getenv("MYSQL_RO_USER", "olist_ro")
         password = os.getenv("MYSQL_RO_PASS", "change_me_ro")
 
-    return {
+    config = {
         "host": host,
         "port": port,
         "database": database,
@@ -50,6 +51,13 @@ def _get_connection_params(role: str = "ro") -> dict:
         "password": password,
         "use_pure": True,
     }
+    if host not in {"localhost", "127.0.0.1"}:
+        config.update(
+            ssl_ca=os.getenv("MYSQL_SSL_CA") or str(Path(__file__).resolve().parents[1] / "isrgrootx1.pem"),
+            ssl_verify_cert=True,
+            ssl_verify_identity=True,
+        )
+    return config
 
 
 def get_ro_connection() -> MySQLConnection:
