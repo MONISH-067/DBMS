@@ -4,13 +4,14 @@ from datetime import date, timedelta
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import logging
+from functools import wraps
 from pathlib import Path
 import re
 from urllib.parse import parse_qsl, urlsplit
 
 from marketplace.cache import cached
 
-from app.db import run_query
+from app.db import run_query, query_trace
 from app.exports import to_csv, to_pdf, to_xlsx
 from app.reports import get_all_reports, get_report, run_report
 
@@ -22,6 +23,18 @@ SCOPE = """FROM v_delivery_performance d
 WHERE (%(state)s IS NULL OR d.state = %(state)s)
 AND (%(start_date)s IS NULL OR d.order_purchase_timestamp >= %(start_date)s)
 AND (%(end_date)s IS NULL OR d.order_purchase_timestamp < %(end_date)s)"""
+
+
+def with_queries(function):
+    @wraps(function)
+    def traced(*args, **kwargs):
+        queries = []
+        token = query_trace.set(queries)
+        try:
+            return function(*args, **kwargs) | {'queries': queries}
+        finally:
+            query_trace.reset(token)
+    return traced
 
 
 def filters(params):
@@ -50,6 +63,7 @@ def records(frame):
 
 
 @cached
+@with_queries
 def overview(params):
     order_stats = run_query(f"""SELECT COUNT(*) AS orders, AVG(d.delivery_days) AS delivery_days,
        AVG(d.is_on_time) AS on_time {SCOPE}""", params)
@@ -69,6 +83,7 @@ def overview(params):
 
 
 @cached
+@with_queries
 def orders(params, query):
     offset = order_page(query.get("page", "1"))
     prefix = query.get("q", "").strip().lower()
@@ -89,6 +104,7 @@ def orders(params, query):
 
 
 @cached
+@with_queries
 def detail(order_id):
     if not re.fullmatch(r"[a-f0-9]{32}", order_id):
         raise ValueError("Order ID must contain 32 hexadecimal characters.")
@@ -115,6 +131,7 @@ def detail(order_id):
 
 
 @cached
+@with_queries
 def schema():
     return {
         "columns": records(run_query("""SELECT TABLE_NAME AS entity, COLUMN_NAME AS field,
@@ -148,7 +165,8 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         request = urlsplit(self.path)
         assets = {"/": ("index.html", "text/html"), "/style.css": ("style.css", "text/css"),
-                  "/app.js": ("app.js", "text/javascript"), "/theme.js": ("theme.js", "text/javascript")}
+                  "/app.js": ("app.js", "text/javascript"), "/theme.js": ("theme.js", "text/javascript"),
+                  "/dashboard-tools.js": ("dashboard-tools.js", "text/javascript")}
         try:
             if request.path in assets:
                 name, mime = assets[request.path]
@@ -183,7 +201,9 @@ class Handler(BaseHTTPRequestHandler):
                     mime, render = exports[query["format"]]
                     self.send_content(render(), mime, filename=f'{report["id"]}.{query["format"]}')
                     return
-                result = {"rows": records(frame), "sql": report["sql"]}
+                result = {"rows": records(frame), "sql": report["sql"], "queries": [
+                    {"sql": report["sql"], "parameters": report["default_params"] | supported}
+                ]}
             else:
                 raise KeyError(request.path)
             self.send_json(result)

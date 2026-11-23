@@ -5,6 +5,7 @@ Authors: Monish L (1972260035), Prasannakumar S (1924260253),
 """
 
 import os
+from contextvars import ContextVar
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
@@ -12,6 +13,8 @@ import mysql.connector
 from mysql.connector.connection import MySQLConnection
 import pandas as pd
 from dotenv import find_dotenv, load_dotenv
+
+query_trace = ContextVar('query_trace', default=None)
 
 # Optional Streamlit import for caching or app-level context
 try:
@@ -93,6 +96,9 @@ def run_query(
     conn = None
     cursor = None
     try:
+        trace = query_trace.get()
+        if trace is not None:
+            trace.append({'sql': sql, 'parameters': params})
         conn = get_ro_connection()
         cursor = conn.cursor()
         if params is not None:

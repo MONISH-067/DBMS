@@ -11,6 +11,7 @@
 <script src="/theme.js"></script>
 <link rel="stylesheet" href="/style.css">
 <script src="/app.js" defer></script>
+<script src="/dashboard-tools.js" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -39,7 +40,13 @@
     <button>Apply filters</button><a id="reset">Clear filters</a>
   </form>
   <p id="message" role="status"></p>
-  <div id="content"></div>
+  <div class="workspace-layout"><div id="content"></div>
+  <section id="query-panel" class="panel query-panel" aria-labelledby="query-title">
+    <h2 id="query-title">SQL behind this action</h2>
+    <p id="query-action" role="status">Loading the current query…</p>
+    <p class="query-note">Parameterized SQL and bound values. Repeated requests may use the five-minute cache.</p>
+    <div id="query-list"></div>
+  </section></div>
   <footer>Olist · Brazilian E-Commerce Public Dataset</footer>
 </main>
 </body></html>

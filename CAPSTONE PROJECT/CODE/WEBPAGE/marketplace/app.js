@@ -58,6 +58,8 @@ async function get(path) {
 
   if (!response.ok) throw new Error(data.error);
 
+  if (data.queries) window.updateQueryPanel?.(data.queries, path);
+
   return data;
 
 }
@@ -100,27 +102,9 @@ function trend(rows) {
 
   if (!rows.length) return "<p>No orders match these filters.</p>";
 
-  const max = Math.max(1, ...rows.map(row => row.order_count));
-
-  const step = 552 / Math.max(1, rows.length - 1);
-
-  const points = rows.map((row, index) => [42 + step * index, 162 - row.order_count * 133 / max]);
-
-  const line = points.map(point => point.join(",")).join(" ");
-
-  return '<svg class="chart" viewBox="0 0 620 200" role="img" aria-label="Monthly order volume. Exact values available below.">' +
-
-    [29, 73, 118, 162].map((y, index) => '<path d="M42 ' + y + 'H594" stroke="#d4dacf"/><text x="37" y="' + (y + 4) + '" text-anchor="end" fill="#536258" font-size="10">' + escape(format(Math.round(max * (3 - index) / 3))) + "</text>").join("") +
-
-    '<polyline fill="none" stroke="#174d3d" stroke-width="3" stroke-linejoin="round" points="' + line + '"/>' +
-
-    points.map(([x,y]) => '<circle cx="' + x + '" cy="' + y + '" r="2.5" fill="#174d3d"/>').join("") +
-
-    '<text x="42" y="186" fill="#536258" font-size="11">' + escape(rows[0].order_month) +
-
-    '</text><text x="594" y="186" text-anchor="end" fill="#536258" font-size="11">' + escape(rows.at(-1).order_month) +
-
-    '</text></svg><details><summary>View monthly values</summary>' + table(rows, "Monthly order volume") + "</details>";
+  return '<div id="overview-monthly">' + reportChart(rows, 'order_count') +
+    '<p id="monthly-selection" role="status">Select a month to see its exact order count.</p></div>' +
+    '<details><summary>View monthly values</summary>' + table(rows, 'Monthly order volume') + '</details>';
 
 }
 
@@ -516,7 +500,7 @@ function reportChart(rows, metric, area = false) {
 
       (area ? '<polygon points="50,230 ' + points.map(p => p.join(",")).join(" ") + ' 750,230" fill="#dceceb"/>' : '') + '<polyline points="' + points.map(p => p.join(",")).join(" ") + '" fill="none" stroke="#087f79" stroke-width="3"/>' +
 
-      points.map(([x,y], i) => '<circle cx="' + x + '" cy="' + y + '" r="4" fill="#087f79" tabindex="0"><title>' + escape(rows[i][keys[0]] + ": " + format(rows[i][valueKey])) + '</title></circle>').join("") +
+      points.map(([x,y], i) => '<circle data-month="' + escape(rows[i][keys[0]]) + '" data-value="' + Number(rows[i][valueKey] || 0) + '" cx="' + x + '" cy="' + y + '" r="4" fill="#087f79" tabindex="0"><title>' + escape(rows[i][keys[0]] + ": " + format(rows[i][valueKey])) + '</title></circle>').join("") +
 
       '<text x="50" y="260" font-size="12" fill="#526775">' + escape(rows[0][keys[0]]) + '</text><text x="750" y="260" text-anchor="end" font-size="12" fill="#526775">' + escape(rows.at(-1)[keys[0]]) + '</text></svg>';
 
@@ -556,7 +540,7 @@ async function showReports() {
 
     panel(report.title, "<p>" + escape(report.description) + '</p><div class="actions">' + links +
 
-      '</div>' + reportGraphic(selected.rows, report.id) + '<section class="chart-selection" aria-live="polite" aria-label="Selected chart values"><h3>Explore a data point</h3><p>Click a chart element or use Tab and Enter to see its exact values.</p></section><details><summary>View exact values</summary>' +
+      '</div><div id="report-visual">' + reportGraphic(selected.rows, report.id) + '</div><section class="chart-selection" aria-live="polite" aria-label="Selected chart values"><h3>Explore a data point</h3><p>Click a chart element or use Tab and Enter to see its exact values.</p></section><details><summary>View exact values</summary>' +
 
       table(selected.rows, report.title) + '</details><details><summary>View report SQL</summary><pre>' +
 
@@ -785,7 +769,10 @@ byId("message").textContent = "Loading marketplace data…";
 
 ({overview:showOverview, orders:showOrders, reports:showReports, database:showDatabase})[view]()
 
-  .then(() => { byId("message").textContent = ""; })
+  .then(() => { byId("message").textContent = ""; window.setupChartZoom?.(); })
 
-  .catch(error => { byId("message").textContent = error.message || "Unable to load marketplace data."; });
+  .catch(error => {
+    byId("message").textContent = error.message || "Unable to load marketplace data.";
+    byId("query-action").textContent = "The data request failed. No query result is available for this action.";
+  });
 
