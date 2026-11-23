@@ -1,0 +1,194 @@
+--- SLIDE 1 ---
+E-Commerce Marketplace Orders
+& Delivery Dashboard
+Guided by: Dr S Sankar, Professor
+Course code: CSA0504
+Course name: Database Management Systems
+Presented by:
+Monish L, 1972260035
+Prasannakumar S, 1924260253
+--- SLIDE 2 ---
+Agenda
+•  Abstract and introduction
+•  Scope and problem analysis
+•  Solution design and database architecture
+•  Two equal project modules
+•  Ten report visualizations and integration
+•  Results, learning and conclusion
+--- SLIDE 3 ---
+Abstract
+•  Olist records Brazilian orders from 2016–2018.
+•  Nine CSV files become normalized MySQL tables.
+•  Two modules split data, interface, SQL and reports equally.
+•  The local website serves four dashboard sections.
+•  Ten charts show exact values; SQL, zoom and exports support review.
+--- SLIDE 4 ---
+Introduction
+•  Marketplace records span several related files.
+•  Manual joins make analysis slow and inconsistent.
+•  Operations users need delivery and revenue comparisons.
+•  Objectives: clean data, enforce keys and build ten reports.
+•  The dashboard connects report results to filters and exports.
+--- SLIDE 5 ---
+Scope and Methodology
+•  Historical Brazilian orders, payments, deliveries and reviews.
+•  Analytics uses MySQL queries against the imported dataset.
+•  The project excludes checkout and real-time processing.
+•  Inspect, clean and import source files.
+•  Validate SQL results, then present charts and exports.
+--- SLIDE 6 ---
+Problem Identification and Analysis
+•  Nine linked CSV files complicate consistent analysis.
+•  Geolocation repeats zip prefixes. Review identifiers may repeat.
+•  Undelivered orders can have missing delivery dates.
+•  Operations users need state, timing and revenue comparisons.
+•  Normalized storage supports consistent joins and constraints.
+--- SLIDE 7 ---
+Solution Design and Implementation
+•  A repeatable importer cleans and loads the nine source CSV files.
+•  Nine normalized MySQL tables and two views support analysis.
+•  A read-only Python service runs parameterized report queries.
+•  HTML, CSS and JavaScript display the custom local dashboard.
+•  A five-minute cache speeds repeated database requests.
+--- SLIDE 8 ---
+System Architecture
+•  Source: nine Olist CSV files from 2016–2018.
+•  Storage: nine normalized local MySQL tables and two views.
+•  Service: read-only Python HTTP endpoints with query caching.
+•  Interface: Overview, Orders, Reports and Database.
+•  Output: charts, exact values, SQL display and exports.
+--- SLIDE 9 ---
+Module 1: Data Preparation
+•  Owner: Monish L, 1972260035.
+•  Clean missing fields and convert dates, identifiers and values.
+•  Deduplicate geolocation by zip prefix.
+•  Load customers, sellers, products and orders in key-safe order.
+•  Validate table counts and relationships after import.
+--- SLIDE 10 ---
+Module 1: Schema and Evidence
+•  Orders: 99,441 records.
+•  Order items: 112,650 records.
+•  Payments: 103,886 records.
+•  Products: 32,951 records.
+•  Primary and foreign keys connect the nine normalized tables.
+--- SLIDE 11 ---
+Module 1: Dashboard Interface
+•  Owner: Monish L, 1972260035.
+•  Overview summarizes orders, revenue, delivery and reviews.
+•  Orders supports search, date, state and outcome filters.
+•  Dataset year shortcuts cover 2016, 2017 and 2018.
+•  The Database page explains tables, relationships and views.
+--- SLIDE 12 ---
+Module 2: SQL and Report Engine
+•  Owner: Prasannakumar S, 1924260253.
+•  Ten parameterized SQL queries power the reports.
+•  Views and joins link orders, items, products and reviews.
+•  Filter values remain separate from the SQL text.
+•  One result set drives charts, exact values and exports.
+--- SLIDE 13 ---
+Module 2: Query and Results
+•  R10 groups review scores by delivery outcome.
+•  On time: 4.29 / 5 across 88,658 reviews.
+•  Late: 2.57 / 5 across 7,701 reviews.
+•  The SQL panel shows the query and bound filter values.
+•  The score difference is an association, not proof of cause.
+--- SLIDE 14 ---
+Module 2: Service and Visual Reports
+•  Owner: Prasannakumar S, 1924260253.
+•  The local Python service reads MySQL through a read-only account.
+•  All ten reports use different graphical representations.
+•  Overview, R01 and R05 support month-range zoom.
+•  CSV, Excel and PDF exports use the same report results.
+--- SLIDE 15 ---
+Report Visualizations
+•  R01 Monthly orders: line chart
+•  R02 Order status share: donut
+•  R03 Top states: ranked bars
+•  R04 Payment share: waffle
+•  R05 Monthly delivery time: line chart
+•  R06 On-time versus late: grouped bars
+•  R07 Category revenue: treemap
+•  R08 Freight by state: lollipop
+•  R09 Delivery distribution: histogram
+•  R10 Review score: star ratings
+--- SLIDE 16 ---
+R01 · Monthly Orders
+•  Monthly order volume across the marketplace.
+--- SLIDE 17 ---
+R02 · Order Status Share
+•  Distribution of orders by status.
+--- SLIDE 18 ---
+R03 · Top 10 States by Orders
+•  Brazilian states ranked by order count.
+--- SLIDE 19 ---
+R04 · Payment Type Share
+•  Payment methods compared by transaction value.
+--- SLIDE 20 ---
+R05 · Avg Delivery Days by Month
+•  Average delivery duration by purchase month.
+--- SLIDE 21 ---
+R06 · On-Time vs Late Deliveries by State
+•  Delivered order counts by state and outcome.
+--- SLIDE 22 ---
+R07 · Revenue by Product Category Top 10
+•  Top product categories ranked by revenue.
+--- SLIDE 23 ---
+R08 · Avg Freight Value by State
+•  Average freight value by destination state.
+--- SLIDE 24 ---
+R09 · Delivery-Time Distribution
+•  Orders grouped by delivery duration.
+--- SLIDE 25 ---
+R10 · Avg Review Score by Delivery Outcome
+•  Average customer rating by delivery outcome.
+--- SLIDE 26 ---
+Report Interaction and Exports
+•  Select a chart mark to see its exact values.
+•  Overview, R01 and R05 support month-range zoom.
+•  Partial stars preserve fractional review averages.
+•  Each data action displays its SQL and bound values.
+•  CSV, Excel and PDF use the report engine output.
+--- SLIDE 27 ---
+Integration of Two Modules
+•  Module 1 supplies cleaned records, schema and dashboard workflows.
+•  Module 2 supplies SQL reports, the service and visual interactions.
+•  The website displays live local MySQL results with their queries.
+•  R07 ranks category revenue and renders a treemap.
+•  SQL and WEBPAGE folders separate database and application code.
+--- SLIDE 28 ---
+Results and Discussion
+•  Orders: 99,441.
+•  Item revenue: R$13,591,643.70.
+•  Average delivery time: 12.5 days.
+•  Average review score: 4.1 / 5.
+•  R10 associates late delivery with lower review scores.
+•  The historical 2016–2018 sample limits generalization.
+--- SLIDE 29 ---
+Learning and Personal Development
+•  Monish: cleaning, relational keys and normalization.
+•  Monish: Overview, Orders, Database and monthly interactions.
+•  Prasannakumar: joins, views and ten report queries.
+•  Prasannakumar: read-only service, SQL display, charts and exports.
+•  Both modules integrate through the local MySQL dashboard.
+--- SLIDE 30 ---
+Conclusion
+•  The project connects historical Olist data to normalized MySQL.
+•  Two equal modules deliver the interface and SQL analysis.
+•  Ten distinct report graphs support operational review.
+•  Exact values, query display and exports make results traceable.
+•  Local MySQL and ngrok support a temporary public demonstration.
+--- SLIDE 31 ---
+References
+•  Olist Brazilian E-Commerce Public Dataset, Kaggle.
+•  MySQL 8.0 Reference Manual.
+•  Python and mysql-connector-python documentation.
+•  Silberschatz, Korth and Sudarshan, Database System Concepts.
+•  Project SQL schema and report source code.
+--- SLIDE 32 ---
+Current Project Status
+•  The custom local website connects to read-only MySQL.
+•  All ten reports render with live data and exact values.
+•  Overview, R01 and R05 support month-range zoom.
+•  The SQL panel explains each data action and bound filters.
+•  ngrok access works while the laptop and local service stay awake.
+--- SLIDE 33 ---

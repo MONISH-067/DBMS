@@ -1,3 +1,0 @@
-import fs from 'node:fs';import {createCanvas,loadImage} from '@napi-rs/canvas';
-for(const [name,page,x,y,w,h] of [['cover',1,0,0,960,150],['left',2,0,0,100,120],['right',2,830,0,130,120],['thanks',22,0,0,960,540]]) {const img=await loadImage(`.presentation-build/template-${page}.png`);const c=createCanvas(w,h);c.getContext('2d').drawImage(img,x,y,w,h,0,0,w,h);fs.writeFileSync(`.presentation-build/${name}.png`,c.toBuffer('image/png'));}
-for(const endpoint of ['overview','reports/R10','reports/R03']){try{const r=await fetch('http://127.0.0.1:8503/api/'+endpoint); const d=await r.json();console.log(endpoint,JSON.stringify(endpoint==='overview'?d.metrics:d.rows));}catch(e){console.log('Unavailable',endpoint);}}
